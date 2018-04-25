@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>JS測試</title>
+	<script src="../circles.js"></script>
+</head>
+<body>
+	
+<div id="backgoundDIV">
+	<br>
+	<div id="outside" >
+		<div id="item_title">
+			<div id="circle_1">1</div>
+			<div id="circle_2">2</div>
+			<div id="circle_3">3</div>
+		</div>
+		<div id="item_title">
+			<br><p style="color: #00AAAA;">永科廠</p><br>
+			<p>總人數：<span id="show_people"></span></p>
+		</div>
+	</div>
+	<br>
+</div>
+
+
+<style type="text/css">
+	/*設定字體*/
+	*, h1, h2, h3, h4, h5, h6, a, p, select {
+		font-family: "微軟正黑體", Microsoft JhengHei, sans-serif, Arial, Helvetica;
+	}
+	#backgoundDIV{
+		background-color: #DDDDDD;
+		height: 100%;
+		width: 80%;
+		margin: 0px auto; 
+	}
+	#outside{
+		background-color: white;
+		height: 180px; 
+		margin: 5px auto;
+		width: 99%; 
+	}
+	#item_title{
+		width: 90%;
+		margin: 0px auto;
+		/*border:2px yellow solid;*/		
+	}
+	#circle_1{		
+		margin-top: 10px;
+		margin-right: 20px;
+		/*border:2px red solid;*/
+		float: right;
+	}
+	#circle_2{	
+		margin-top: 10px;
+		margin-right: 20px;
+		/*border:2px blue solid;*/
+		float: right;
+	}
+	#circle_3{		
+		margin-top: 10px;
+		margin-right: 20px;
+		/*border:2px green solid;*/
+		float: right;
+	}
+</style>
+<script type="text/javascript">
+	//假定資料設定
+	var data_count = 3;
+	var value_of_peoele = [417,23,38]; 
+	var Item_name = ["廠內人數","請假人數","外出人數"];
+	var circle_color = [ 
+		['#DDDDDD', '#00DDDD'],
+		['#DDDDDD', '#66DD00'],
+		['#DDDDDD', '#FF5511'] 
+	];
+	var total_people = 478;
+	//顯示總人數欄位
+	document.getElementById('show_people').innerHTML=total_people;
+	//跑3個圈圈
+	for (var i = 0; i < data_count; i++) {
+		//設定DIV名稱及顯示文字
+		var divName = "circle_"+(data_count-i);
+		var text_str = "<br><br>"+value_of_peoele[i]+"<br>"+Item_name[i];
+		var myCircle = Circles.create({
+		    id:                  divName, //顯示區塊名稱
+		    radius:              80, //圓圈半徑
+		    value:               value_of_peoele[i], //數值
+		    maxValue:            total_people,//最大值
+		    width:               5,  //圓圈粗度
+	  		
+		    text:    			text_str,           
+		    // function(value){
+		    // 	var str = "<br><br>" + value + "<br>" + Item_name[i];
+		    // 	return str;
+		    // }, //顯示文字
+		    colors:              circle_color[i], //圈圈顏色[max-value,value]
+		    duration:            350,//從0%跑到目標%的動畫速度,預設500,0不跑,越小越快
+		    wrpClass:            'circles-wrp',
+		    textClass:           'circles-text',
+		    valueStrokeClass:    'circles-valueStroke',
+		    maxValueStrokeClass: 'circles-maxValueStroke',
+		    styleWrapper:        true,//要不要把文字放在圈圈內
+		    styleText:           true //要不要把文字放在圈圈內
+		});
+	}
+
+</script>
+
+</body>
+</html>
