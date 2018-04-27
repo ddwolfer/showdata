@@ -1,29 +1,10 @@
+
 <!DOCTYPE html>
 <html>
 <head>
 	<title>JS測試</title>
 	<script src="../circles.js"></script>
-</head>
-<body>
-	
-<div id="backgoundDIV">
-	<br>
-	<div id="outside" >
-		<div id="item_title">
-			<div id="circle_1">1</div>
-			<div id="circle_2">2</div>
-			<div id="circle_3">3</div>
-		</div>
-		<div id="item_title">
-			<br><p style="color: #00AAAA; font-size: 25px;">永科廠</p>
-			<p>總人數：<span id="show_people"></span></p>
-		</div>
-	</div>
-	<br>
-</div>
-
-
-<style type="text/css"> 
+	<style type="text/css"> 
 	/*設定字體*/
 	*, h1, h2, h3, h4, h5, h6, a, p, select {
 		font-family: "微軟正黑體", Microsoft JhengHei, sans-serif, Arial, Helvetica;
@@ -46,65 +27,145 @@
 		margin: 0px auto;
 		/*border:2px yellow solid;*/		
 	}
-	#circle_1{		
+	.circle{
 		margin-top: 10px;
-		margin-right: 20px;
-		/*border:2px red solid;*/
-		float: right;
-	}
-	#circle_2{	
-		margin-top: 10px;
-		margin-right: 20px;
-		/*border:2px blue solid;*/
-		float: right;
-	}
-	#circle_3{		
-		margin-top: 10px;
-		margin-right: 20px;
+		margin-right: 15px;
 		/*border:2px green solid;*/
 		float: right;
 	}
-</style>
-<script type="text/javascript">
-	//假定資料設定
-	var data_count = 3;
-	var value_of_peoele = [417,23,38]; 
-	var Item_name = ["廠內人數","請假人數","外出人數"];
-	var circle_color = [ 
-		['#DDDDDD', '#00DDDD'],
-		['#DDDDDD', '#66DD00'],
-		['#DDDDDD', '#FF5511'] 
-	];
-	var total_people = 478;
-	//顯示總人數欄位
-	document.getElementById('show_people').innerHTML=total_people;
-	//跑3個圈圈
-	for (var i = 0; i < data_count; i++) {
-		//設定DIV名稱及顯示文字
-		var divName = "circle_"+(data_count-i);
-		var text_str = "<br><br>"+value_of_peoele[i]+"<br>"+Item_name[i];
-		var myCircle = Circles.create({
-		    id:                  divName, //顯示區塊名稱
-		    radius:              80, //圓圈半徑
-		    value:               value_of_peoele[i], //數值
-		    maxValue:            total_people,//最大值
-		    width:               5,  //圓圈粗度
-	  		
-		    text:    			text_str,           
-		    // function(value){
-		    // 	var str = "<br><br>" + value + "<br>" + Item_name[i];
-		    // 	return str;
-		    // }, //顯示文字
-		    colors:              circle_color[i], //圈圈顏色[max-value,value]
-		    duration:            350,//從0%跑到目標%的動畫速度,預設500,0不跑,越小越快
-		    wrpClass:            'circles-wrp',
-		    textClass:           'circles-text',
-		    valueStrokeClass:    'circles-valueStroke',
-		    maxValueStrokeClass: 'circles-maxValueStroke',
-		    styleWrapper:        true,//要不要把文字放在圈圈內
-		    styleText:           true //要不要把文字放在圈圈內
-		});
+	.show_other_department{
+		margin-top: 10px;
+		margin-right: 2.5%;
+		width: 30%;
+		border:2px green solid;
+		float: right;
 	}
+</style>
+</head>
+<body>
+<script type="text/javascript">
+	var fs = require("fs");
+	var file = "./test.db";
+
+	//載入 sqlite3
+	var sqlite3 = require("sqlite3").verbose();
+	//new 一個 sqlite 的 database，檔案是 test.db
+	var db = new sqlite3.Database(file);
+
+
+</script>
+
+<div id="backgoundDIV">
+	<br>
+	<div id="outside" >
+		<div style="margin: 0px auto;width: 95%;">
+			<div id="circle_1" class="circle">1</div>
+			<div id="circle_2" class="circle">2</div>
+			<div id="circle_3" class="circle">3</div>
+			<div id="circle_4" class="circle">4</div>
+		</div>
+		<div id="item_title">
+			<br><p style="color: #00AAAA; font-size: 25px;">永科廠</p>
+			<p>總人數：<span id="show_people"></span></p>
+		</div>
+	</div>
+	<br>
+	<p>
+		<input type="text" name="Employee_ID">
+		<button onclick="on_work()">上班打卡</button>
+		<button onclick="Leave_work()">我要請假</button>
+		<button onclick="out_work()">暫時外出</button>
+		<button onclick="off_work()">下班打卡</button>
+		<button>瀏覽其他部門</button>
+		<button>部門詳細資料</button>
+	</p>
+	<br>
+	<div id="moreInfo">
+		<!-- <div class="show_other_department"></div>
+		<div class="show_other_department"></div>
+		<div class="show_other_department"></div> -->
+	</div>
+</div>
+
+
+
+<script type="text/javascript">
+
+	var _on_work = 0;
+	var _out_work = 0;
+	var _Leave_work = 0;
+	var total_people =150;
+	show_people_data();
+
+	function on_work() {
+		if (total_people > 0) {
+			_on_work = _on_work + 1 ;
+			show_people_data();
+		}
+	}
+	function off_work() {
+		if (_on_work > 0) {
+			_on_work = _on_work - 1 ;
+			show_people_data();
+		}
+	}
+	function out_work() {
+		//公司有人才允許外出
+		if (_on_work > 0) {
+			_on_work = _on_work - 1 ;
+			_out_work = _out_work + 1 ;
+			show_people_data();
+		}
+	}
+	function Leave_work() {
+		if (total_people > 0) {
+			_Leave_work =  _Leave_work + 1 ;
+		 	show_people_data();
+		}
+	}
+
+	function show_people_data() {
+		//假定資料設定
+		var data_count = 4;
+		var value_of_peoele = [_on_work,_Leave_work,_out_work,total_people-_on_work-_Leave_work-_out_work]; 
+		var Item_name = ["廠內人數","請假人數","外出人數","下班人數"];
+		var circle_color = [ 
+			['#DDDDDD', '#00DDDD'],
+			['#DDDDDD', '#66DD00'],
+			['#DDDDDD', '#FF5511'],
+			['#DDDDDD', '#FF3333'] 
+		];	
+		//顯示總人數欄位
+		document.getElementById('show_people').innerHTML=total_people;
+		//跑3個圈圈
+		for (var i = 0; i < data_count; i++) {
+			//設定DIV名稱及顯示文字
+			var divName = "circle_"+(data_count-i);
+			var text_str = "<br><br>"+value_of_peoele[i]+"<br>"+Item_name[i];
+			var myCircle = Circles.create({
+			    id:                  divName, //顯示區塊名稱
+			    radius:              80, //圓圈半徑
+			    value:               value_of_peoele[i], //數值
+			    maxValue:            total_people,//最大值
+			    width:               5,  //圓圈粗度
+		  		
+			    text:    			text_str,           
+			    // function(value){
+			    // 	var str = "<br><br>" + value + "<br>" + Item_name[i];
+			    // 	return str;
+			    // }, //顯示文字
+			    colors:              circle_color[i], //圈圈顏色[max-value,value]
+			    duration:            0,//從0%跑到目標%的動畫速度,預設500,0不跑,越小越快
+			    wrpClass:            'circles-wrp',
+			    textClass:           'circles-text',
+			    valueStrokeClass:    'circles-valueStroke',
+			    maxValueStrokeClass: 'circles-maxValueStroke',
+			    styleWrapper:        true,//要不要把文字放在圈圈內
+			    styleText:           true //要不要把文字放在圈圈內
+			});
+		}
+	}
+	
 
 </script>
 
