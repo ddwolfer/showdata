@@ -37,12 +37,6 @@
 		
 	<br>
 	<div id="moreInfo">
-		<!-- <div id="line01">
-			<div class="show_other_department">55555555</div>
-			<div class="show_other_department">55555555</div>
-			<div class="show_other_department">5555555555</div>
-			<div style="clear:both;"></div>
-		</div> -->
 
 	</div>
 </div>
@@ -81,7 +75,7 @@
         }, null);
     });
 
-	//生產DIV
+	//生產DIV function
     function addDIV() {
 		var line_num =Math.floor( Div_count / 3);
 		if ( Div_count % 3 == 0 ) {
@@ -197,10 +191,10 @@
 				var text_str = "<br><br>"+value_of_peoele[i];
 				var myCircle = Circles.create({
 				    id:                  divName, //顯示區塊名稱
-				    radius:              20, //圓圈半徑
+				    radius:              25, //圓圈半徑
 				    value:               value_of_peoele[i], //數值
 				    maxValue:            total_people,//最大值
-				    width:               5,  //圓圈粗度
+				    width:               3,  //圓圈粗度
 			  		
 				    text:    			text_str,           
 				    // function(value){
@@ -219,6 +213,47 @@
 			}
 		}
 		
+	}
+
+	function circle_data_show( total , on_work , out_work , Leave_work , department ){
+		//假定資料設定
+		var data_count = 4;
+		var value_of_peoele = [on_work,Leave_work,out_work,total-on_work-Leave_work-out_work]; 
+		var Item_name = ["廠內人數","請假人數","外出人數","下班人數"];
+		var circle_color = [ 
+			['#DDDDDD', '#00DDDD'],
+			['#DDDDDD', '#66DD00'],
+			['#DDDDDD', '#FF5511'],
+			['#DDDDDD', '#FF3333'] 
+		];	
+
+		//圈圈
+		for (var i = 0; i < data_count; i++) {
+			//設定DIV名稱及顯示文字
+			var divName = "circle_"+(department-1)+"_"+(data_count-i);
+			var text_str = "<br><br>"+value_of_peoele[i];
+			var myCircle = Circles.create({
+			    id:                  divName, //顯示區塊名稱
+			    radius:              25, //圓圈半徑
+			    value:               value_of_peoele[i], //數值
+			    maxValue:            total_people,//最大值
+			    width:               5,  //圓圈粗度
+		  		
+			    text:    			text_str,           
+			    // function(value){
+			    // 	var str = "<br><br>" + value + "<br>" + Item_name[i];
+			    // 	return str;
+			    // }, //顯示文字
+			    colors:              circle_color[i], //圈圈顏色[max-value,value]
+			    duration:            0,//從0%跑到目標%的動畫速度,預設500,0不跑,越小越快
+			    wrpClass:            'circles-wrp',
+			    textClass:           'circles-text',
+			    valueStrokeClass:    'circles-valueStroke',
+			    maxValueStrokeClass: 'circles-maxValueStroke',
+			    styleWrapper:        true,//要不要把文字放在圈圈內
+			    styleText:           true //要不要把文字放在圈圈內
+			});
+		}
 	}
 </script>
 
