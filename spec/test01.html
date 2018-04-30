@@ -4,56 +4,9 @@
 <head>
 	<title>JS測試</title>
 	<script src="../circles.js"></script>
-	<style type="text/css"> 
-	/*設定字體*/
-	*, h1, h2, h3, h4, h5, h6, a, p, select {
-		font-family: "微軟正黑體", Microsoft JhengHei, sans-serif, Arial, Helvetica;
-	}
-	#backgoundDIV{
-		background-color: #EEEEEE;
-		height: 100%;
-		width: 80%;
-		margin: 0px auto; 
-	}
-	#outside{
-		background-color: white;
-		height: 180px; 
-		margin: 5px auto;
-		width: 99%; 
-		box-shadow: 0 5px 10px -2px #9B9B9B;
-	}
-	#item_title{
-		width: 90%;
-		margin: 0px auto;
-		/*border:2px yellow solid;*/		
-	}
-	.circle{
-		margin-top: 10px;
-		margin-right: 15px;
-		/*border:2px green solid;*/
-		float: right;
-	}
-	.show_other_department{
-		margin-top: 10px;
-		margin-right: 2.5%;
-		width: 30%;
-		border:2px green solid;
-		float: right;
-	}
-</style>
+	<link rel=stylesheet type="text/css" href="main.css">
 </head>
-<body>
-<script type="text/javascript">
-	var fs = require("fs");
-	var file = "./test.db";
-
-	//載入 sqlite3
-	var sqlite3 = require("sqlite3").verbose();
-	//new 一個 sqlite 的 database，檔案是 test.db
-	var db = new sqlite3.Database(file);
-
-
-</script>
+<body> 
 
 <div id="backgoundDIV">
 	<br>
@@ -64,38 +17,96 @@
 			<div id="circle_3" class="circle">3</div>
 			<div id="circle_4" class="circle">4</div>
 		</div>
-		<div id="item_title">
+		<div class="item_title">
 			<br><p style="color: #00AAAA; font-size: 25px;">永科廠</p>
 			<p>總人數：<span id="show_people"></span></p>
 		</div>
 	</div>
 	<br>
-	<p>
-		<input type="text" name="Employee_ID">
-		<button onclick="on_work()">上班打卡</button>
-		<button onclick="Leave_work()">我要請假</button>
-		<button onclick="out_work()">暫時外出</button>
-		<button onclick="off_work()">下班打卡</button>
-		<button>瀏覽其他部門</button>
-		<button>部門詳細資料</button>
-	</p>
+	<div style="margin: 0px auto;width: 98%; ">
+		<p>
+			<input type="text" name="Employee_ID" placeholder="idcard">
+			<button onclick="on_work()">上班打卡</button>
+			<button onclick="Leave_work()">我要請假</button>
+			<button onclick="out_work()">暫時外出</button>
+			<button onclick="off_work()">下班打卡</button>
+			<button onclick="show_people_data2()">瀏覽其他部門</button>
+<!-- 			<button>部門詳細資料</button> -->
+		</p>
+	</div>
+		
 	<br>
 	<div id="moreInfo">
-		<!-- <div class="show_other_department"></div>
-		<div class="show_other_department"></div>
-		<div class="show_other_department"></div> -->
+		<!-- <div id="line01">
+			<div class="show_other_department">55555555</div>
+			<div class="show_other_department">55555555</div>
+			<div class="show_other_department">5555555555</div>
+			<div style="clear:both;"></div>
+		</div> -->
+
 	</div>
 </div>
 
-
-
 <script type="text/javascript">
+	var db = openDatabase('mydb','1.0','Test DB',10*1024*1024); //連接資料庫
+	var Div_count =0;	//DIV計數用
+
+	//讀取資料庫
+	db.transaction(function (tx) {
+		//依據資料庫製造DIV
+        tx.executeSql("SELECT * FROM department", [], function (tx, results) {
+            var len = results.rows.length, i;
+            //迴圈
+            for (i = 0; i < len; i++){
+            	//製造DIV
+            	addDIV();
+            	//顯示工廠名稱
+                var msg = "  <div style='margin: 0px auto;width: 95%;'>"
+                //放圈圈的DIV
+                for (var j = 0; j < 4; j++) {
+                	msg += "<div id='circle_"+i+"_"+(j+1)+"' class='circle'>"+(j+1)+"</div>";
+                }
+                msg += "</div>   <div class='item_title' id='item"+i+"'> <p style='color: #00AAAA; font-size: 10px;'>"+results.rows.item(i).name + "</p> </div>";
+
+                document.querySelector('#show'+i).innerHTML +=  msg;
+                //抓人數
+                tx.executeSql("SELECT * FROM employee where department ="+(i+1),[],function(tx, results,i) {
+                	var people_num = results.rows.length;
+                	//顯示人數
+                	var msgg = "<p style='font-size: 8px; '>總人數"+people_num+"</p>";
+                	var div_num = results.rows.item(i).department-1;
+                	document.querySelector('#item'+div_num).innerHTML += msgg;
+                }, null);
+            }
+        }, null);
+    });
+
+	//生產DIV
+    function addDIV() {
+		var line_num =Math.floor( Div_count / 3);
+		if ( Div_count % 3 == 0 ) {
+			var Bigdivstr = "<div class='line_data' id='line"+line_num+"' style=' height: 100px; '></div><br>"
+			document.all["moreInfo"].insertAdjacentHTML("BeforeEnd",Bigdivstr);
+		}
+		
+		var line_str = "line"+line_num;
+		var divstr = "<div class='show_other_department' name='show"+Div_count+"' id='show"+Div_count+"'></div>"
+		document.all[line_str ].insertAdjacentHTML("BeforeEnd",divstr);
+
+		Div_count++;
+	}
+
+
+
+
+
 
 	var _on_work = 0;
 	var _out_work = 0;
 	var _Leave_work = 0;
-	var total_people =150;
+	var total_people =50;
 	show_people_data();
+	show_people_data2();
 
 	function on_work() {
 		if (total_people > 0) {
@@ -137,7 +148,7 @@
 		];	
 		//顯示總人數欄位
 		document.getElementById('show_people').innerHTML=total_people;
-		//跑3個圈圈
+		//圈圈
 		for (var i = 0; i < data_count; i++) {
 			//設定DIV名稱及顯示文字
 			var divName = "circle_"+(data_count-i);
@@ -165,8 +176,50 @@
 			});
 		}
 	}
-	
-
+	function show_people_data2() {
+		for (var k = 0; k < 5; k++) {
+			//假定資料設定
+			var data_count = 4;
+			var value_of_peoele = [_on_work,_Leave_work,_out_work,total_people-_on_work-_Leave_work-_out_work]; 
+			var Item_name = ["廠內人數","請假人數","外出人數","下班人數"];
+			var circle_color = [ 
+				['#DDDDDD', '#00DDDD'],
+				['#DDDDDD', '#66DD00'],
+				['#DDDDDD', '#FF5511'],
+				['#DDDDDD', '#FF3333'] 
+			];	
+			//顯示總人數欄位
+			document.getElementById('show_people').innerHTML=total_people;
+			//圈圈
+			for (var i = 0; i < data_count; i++) {
+				//設定DIV名稱及顯示文字
+				var divName = "circle_"+k+"_"+(data_count-i);
+				var text_str = "<br><br>"+value_of_peoele[i];
+				var myCircle = Circles.create({
+				    id:                  divName, //顯示區塊名稱
+				    radius:              20, //圓圈半徑
+				    value:               value_of_peoele[i], //數值
+				    maxValue:            total_people,//最大值
+				    width:               5,  //圓圈粗度
+			  		
+				    text:    			text_str,           
+				    // function(value){
+				    // 	var str = "<br><br>" + value + "<br>" + Item_name[i];
+				    // 	return str;
+				    // }, //顯示文字
+				    colors:              circle_color[i], //圈圈顏色[max-value,value]
+				    duration:            0,//從0%跑到目標%的動畫速度,預設500,0不跑,越小越快
+				    wrpClass:            'circles-wrp',
+				    textClass:           'circles-text',
+				    valueStrokeClass:    'circles-valueStroke',
+				    maxValueStrokeClass: 'circles-maxValueStroke',
+				    styleWrapper:        true,//要不要把文字放在圈圈內
+				    styleText:           true //要不要把文字放在圈圈內
+				});
+			}
+		}
+		
+	}
 </script>
 
 </body>

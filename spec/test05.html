@@ -1,0 +1,62 @@
+<!DOCTYPE HTML>
+<html>
+<head>
+<script type="text/javascript">
+
+    var db = openDatabase('mydb','1.0','Test DB',10*1024*1024);
+    var msg;
+    db.transaction(function (tx) {
+        // body...
+        tx.executeSql('CREATE TABLE IF NOT EXISTS department ( `ID` INTEGER PRIMARY KEY, `name` VARCHAR(50))');
+        tx.executeSql('CREATE TABLE IF NOT EXISTS employee (`ID` INTEGER PRIMARY KEY, `idcard` VARCHAR(15) NOT NULL , `name` VARCHAR(20) NOT NULL , `department` INT NOT NULL , `position` VARCHAR(20) NOT NULL , `action` VARCHAR(10) NOT NULL )');
+
+        for (var i = 0; i < 5; i++) {
+            // tx.executeSql("INSERT INTO department VALUES (NULL,?)",["測試部門"+(i+1)]);
+            // var department_ID = ((i%5)+1);
+            // tx.executeSql("INSERT INTO employee VALUES (NULL,?,?,?,?,?)",["0427010"+i , "主管0"+i+"號" , department_ID , "主管" ,"OFF"]);
+        }
+        //產生更多的人
+        for (var i = 0; i < 90; i++) {
+            // var department_ID = (i%5) + 1;
+            // if (i<10) {
+            //     tx.executeSql("INSERT INTO employee VALUES (NULL,?, ?,?,?,?)",["0427020"+i , "測試人員0"+i+"號" , department_ID,"實習生","OFF"]);
+            // }
+            // else{
+            //     tx.executeSql("INSERT INTO employee VALUES (NULL,?, ?,?,?,?)",["042702"+i , "測試人員"+i+"號" , department_ID,"實習生","OFF"]);
+            // }
+        }
+
+        msg = '<p>Log message created and row inserted.</p>';
+        document.querySelector('#status').innerHTML =  msg;
+    });
+
+    db.transaction(function (tx) {
+        tx.executeSql('SELECT * FROM department', [], function (tx, results) {
+            var len = results.rows.length, i;
+            msg = "<p>Found rows: " + len + "</p>";
+            document.querySelector('#status').innerHTML +=  msg;
+            for (i = 0; i < len; i++){
+                msg = "<p><b>"+results.rows.item(i).ID + " : " +results.rows.item(i).name + "</b></p>";
+                document.querySelector('#status').innerHTML +=  msg;
+            }
+        }, null);
+    });
+
+    db.transaction(function (tx) {
+        tx.executeSql('SELECT * FROM employee', [], function (tx, results) {
+            var len = results.rows.length, i;
+            msg = "<p>Found rows: " + len + "</p>";
+            document.querySelector('#status').innerHTML +=  msg;
+            for (i = 0; i < len; i++){
+                msg = "<p><b>"+results.rows.item(i).ID + " : " +results.rows.item(i).idcard + results.rows.item(i).name + results.rows.item(i).department+ results.rows.item(i).position + results.rows.item(i).action +"</b></p>";
+                document.querySelector('#status').innerHTML +=  msg;
+            }
+        }, null);
+    });
+
+</script>
+</head>
+<body>
+    <div id="status" name="status">Status Message</div>
+</body>
+</html>

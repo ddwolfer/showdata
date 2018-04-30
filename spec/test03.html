@@ -1,0 +1,68 @@
+<HTML>
+<HEAD> 
+<TITLE></TITLE>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<style>
+body,input,textarea,select,td{font-size:9pt;font-family:verdana;}
+		/*設定字體*/
+		*, h1, h2, h3, h4, h5, h6, a, p, select {
+			font-family: "微軟正黑體", Microsoft JhengHei, sans-serif, Arial, Helvetica;
+		}
+		.show_other_department{
+			margin-top: 10px;
+			margin-right: 2.5%;
+			width: 30%;
+			border:2px green solid;
+			float: left;
+		}
+</style>
+<SCRIPT LANGUAGE="JavaScript">
+	var i=0;
+	var div_count = 0;
+	function addMore(){
+	    i++;
+	    var str="<div id='inputfild'>field" + i + " name:<input type=text size=5><div>";
+	    document.all["myform"].insertAdjacentHTML("BeforeEnd",str);
+	}
+
+	function delLast(){
+		if(document.all["inputfild"]){
+		    c = document.all["inputfild"].length - 1
+		    c = (!document.all["inputfild"].length)? "":"["+c+"]"
+		    eval("document.all[\"inputfild\"]"+c).outerHTML = "";
+		    i --;
+		}
+		else{
+		    alert("no more")
+		}
+	}
+	function addDIV() {
+		var line_num =Math.floor( div_count / 3);
+		if ( div_count % 3 == 0 ) {
+			var Bigdivstr = "<div id='line"+line_num+"' style='border:2px red solid; height: 50px; '></div>"
+			document.all["moreInfo"].insertAdjacentHTML("BeforeEnd",Bigdivstr);
+		}
+		
+		var line_str = "line"+line_num;
+		var divstr = "<div class='show_other_department'>內框"+div_count+"</div>"
+		document.all[line_str ].insertAdjacentHTML("BeforeEnd",divstr);
+
+		div_count++;
+	}
+</SCRIPT>
+</HEAD>
+
+<BODY>
+動態地產生文字方塊，再加上動態刪除文字方塊<BR>
+
+<input type=button value="Add Text Box" onclick="addMore();">
+<input type=button value="delet Text Box" onclick="delLast();">
+<input type=button value="Add DIV" onclick="addDIV();">
+<div id=myform>
+
+</div>
+<div id="moreInfo">
+	
+</div>
+</BODY>
+</HTML>

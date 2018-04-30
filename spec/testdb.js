@@ -1,4 +1,4 @@
-var fs = require("fs");
+
 var file = "./test.db";
 
 //載入 sqlite3
@@ -40,11 +40,10 @@ db.serialize(function() {
 
   //查看DB狀況
   console.log(db);
+  var count;
   db.each("SELECT count(ID) AS number_of_Depart FROM department", function(err, row) {
     //log 出所有的資料
-
-    public count  = row.number_of_Depart;
-
+    count = row.number_of_Depart;
   });
   console.log(count);
   

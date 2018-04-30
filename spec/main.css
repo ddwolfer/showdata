@@ -1,0 +1,47 @@
+/*設定字體*/
+	*, h1, h2, h3, h4, h5, h6, a, p, select {
+		font-family: "微軟正黑體", Microsoft JhengHei, sans-serif, Arial, Helvetica;
+	} 
+	#backgoundDIV{
+		background-color: #E0E0E0;
+		height: 100%;
+		width: 90%;
+		margin: 0px auto; 
+	}
+	#outside{
+		background-color: white;
+		height: 180px; 
+		margin: 5px auto;
+		width: 99%; 
+		box-shadow: 0 5px 10px -2px #9B9B9B;
+	}
+	#moreInfo{
+		
+		height: 100%; 
+		margin: 5px auto;
+		width: 99%;
+	}
+	.item_title{
+		width: 90%;
+		margin: 0px auto;
+		/*border:2px yellow solid;*/		
+	}
+	.line_data{
+		background-color: #EEEEEE;
+		box-shadow: 0 5px 10px -2px #9B9B9B;
+	}
+	.circle{
+		margin-top: 10px;
+		margin-right: 15px;
+		/*border:2px green solid;*/
+		float: right;
+	}
+	.show_other_department{
+		background-color: white;
+		box-shadow: 0 5px 10px -2px #9B9B9B;
+		margin-top: 10px;
+		margin-left: 2.5%;
+		width: 30%;
+		/*border:2px green solid;*/
+		float: left;
+	}
