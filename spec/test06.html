@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title></title>
+</head>
+<body>
+
+<script type="text/javascript">
+	
+document.onkeydown=function(event){
+	var e = event || window.event || arguments.callee.caller.arguments[0];
+	if(e && e.keyCode==113){ // 按 F2 
+		alert("F2");
+		document.location.href="file:///C:/Users/user/Desktop/showdata/spec/test01.html";
+	}      
+
+	if(e.keyCode == 13 && e.altKey){
+	    alert("alt+Enter 組合按鍵");
+	}
+
+	if(e.keyCode == 13 && e.ctrlKey){
+	    alert("ctrl+Enter 組合按鍵");
+	}
+
+	if(e.keyCode == 13 && e.shiftKey){
+	    alert("shift+Enter 組合按鍵");
+	}
+	// $("input").keydown(function(e){
+	// 	if(e.keyCode == 13 && e.ctrlKey){
+	// 		alert("LAA");
+	// 	}
+	// });
+}; 
+
+</script>
+偵測鍵盤測試 <br>
+請按下F2跳轉頁面
+
+
+</body>
+</html>

@@ -39,7 +39,7 @@ body,input,textarea,select,td{font-size:9pt;font-family:verdana;}
 	function addDIV() {
 		var line_num =Math.floor( div_count / 3);
 		if ( div_count % 3 == 0 ) {
-			var Bigdivstr = "<div id='line"+line_num+"' style='border:2px red solid; height: 50px; '></div>"
+			var Bigdivstr = "<div id='line"+line_num+"' style='border:2px red solid; height: 50px; '>外框"+line_num+"</div>"
 			document.all["moreInfo"].insertAdjacentHTML("BeforeEnd",Bigdivstr);
 		}
 		
@@ -48,6 +48,11 @@ body,input,textarea,select,td{font-size:9pt;font-family:verdana;}
 		document.all[line_str ].insertAdjacentHTML("BeforeEnd",divstr);
 
 		div_count++;
+	}
+	function deleteDIV() {
+		// body...
+		document.getElementById('moreInfo').innerHTML = " ";
+		div_count = 0;
 	}
 </SCRIPT>
 </HEAD>
@@ -58,6 +63,7 @@ body,input,textarea,select,td{font-size:9pt;font-family:verdana;}
 <input type=button value="Add Text Box" onclick="addMore();">
 <input type=button value="delet Text Box" onclick="delLast();">
 <input type=button value="Add DIV" onclick="addDIV();">
+<input type="button" value="Delete DIV" onclick="deleteDIV()">
 <div id=myform>
 
 </div>

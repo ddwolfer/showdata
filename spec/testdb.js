@@ -44,8 +44,9 @@ db.serialize(function() {
   db.each("SELECT count(ID) AS number_of_Depart FROM department", function(err, row) {
     //log 出所有的資料
     count = row.number_of_Depart;
+    console.log("inDBeach : " + count);
   });
-  console.log(count);
+  console.log("out : " + count);
   
   db.each("SELECT ID,name FROM department", function(err, row) {
     //log 出所有的資料

@@ -10,6 +10,7 @@
 
 <div id="backgoundDIV">
 	<br>
+	<!-- 顯示上方主要部門 -->
 	<div id="outside" >
 		<div style="margin: 0px auto;width: 95%;">
 			<div id="circle_1" class="circle">1</div>
@@ -22,6 +23,7 @@
 			<p>總人數：<span id="show_people"></span></p>
 		</div>
 	</div>
+	<!-- 顯示上方主要部門END -->
 	<br>
 	<div style="margin: 0px auto;width: 98%; ">
 		<p>
@@ -30,69 +32,55 @@
 			<button onclick="Leave_work()">我要請假</button>
 			<button onclick="out_work()">暫時外出</button>
 			<button onclick="off_work()">下班打卡</button>
-			<button onclick="show_people_data2()">瀏覽其他部門</button>
-<!-- 			<button>部門詳細資料</button> -->
+			<button onclick="more_department_Info()">瀏覽其他部門</button>
+			<button onclick="show_people_data2()">部門詳細資料</button>
 		</p>
 	</div>
 		
 	<br>
+	<!-- 顯示剩餘部門 -->
 	<div id="moreInfo">
 
 	</div>
+	<!-- 顯示剩餘部門END -->
 </div>
 
 <script type="text/javascript">
 	var db = openDatabase('mydb','1.0','Test DB',10*1024*1024); //連接資料庫
 	var Div_count =0;	//DIV計數用
+	function more_department_Info() {
+		//讀取資料庫
+		db.transaction(function (tx) {
+			//依據資料庫製造DIV
+	        tx.executeSql("SELECT * FROM department", [], function (tx, results) {
+	            var len = results.rows.length, i;
+	            //迴圈
+	            for (i = 0; i < len; i++){
+	            	//製造DIV
+	            	addDIV();
+	            	//顯示工廠名稱
+	                var msg = "  <div style='margin: 0px auto;width: 95%;'>"
+	                //放圈圈的DIV
+	                for (var j = 0; j < 4; j++) {
+	                	msg += "<div id='circle_"+i+"_"+(j+1)+"' class='circle'>"+(j+1)+"</div>";
+	                }
+	                msg += "</div>   <div class='item_title' id='item"+i+"'> <p style='color: #00AAAA; font-size: 10px;'>"+results.rows.item(i).name + "</p> </div>";
 
-	//讀取資料庫
-	db.transaction(function (tx) {
-		//依據資料庫製造DIV
-        tx.executeSql("SELECT * FROM department", [], function (tx, results) {
-            var len = results.rows.length, i;
-            //迴圈
-            for (i = 0; i < len; i++){
-            	//製造DIV
-            	addDIV();
-            	//顯示工廠名稱
-                var msg = "  <div style='margin: 0px auto;width: 95%;'>"
-                //放圈圈的DIV
-                for (var j = 0; j < 4; j++) {
-                	msg += "<div id='circle_"+i+"_"+(j+1)+"' class='circle'>"+(j+1)+"</div>";
-                }
-                msg += "</div>   <div class='item_title' id='item"+i+"'> <p style='color: #00AAAA; font-size: 10px;'>"+results.rows.item(i).name + "</p> </div>";
-
-                document.querySelector('#show'+i).innerHTML +=  msg;
-                //抓人數
-                tx.executeSql("SELECT * FROM employee where department ="+(i+1),[],function(tx, results,i) {
-                	var people_num = results.rows.length;
-                	//顯示人數
-                	var msgg = "<p style='font-size: 8px; '>總人數"+people_num+"</p>";
-                	var div_num = results.rows.item(i).department-1;
-                	document.querySelector('#item'+div_num).innerHTML += msgg;
-                }, null);
-            }
-        }, null);
-    });
-
-	//生產DIV function
-    function addDIV() {
-		var line_num =Math.floor( Div_count / 3);
-		if ( Div_count % 3 == 0 ) {
-			var Bigdivstr = "<div class='line_data' id='line"+line_num+"' style=' height: 100px; '></div><br>"
-			document.all["moreInfo"].insertAdjacentHTML("BeforeEnd",Bigdivstr);
-		}
-		
-		var line_str = "line"+line_num;
-		var divstr = "<div class='show_other_department' name='show"+Div_count+"' id='show"+Div_count+"'></div>"
-		document.all[line_str ].insertAdjacentHTML("BeforeEnd",divstr);
-
-		Div_count++;
+	                document.querySelector('#show'+i).innerHTML +=  msg;
+	                //抓人數
+	                tx.executeSql("SELECT * FROM employee where department ="+(i+1),[],function(tx, results,i) {
+	                	var people_num = results.rows.length;
+	                	//顯示人數
+	                	var msgg = "<p style='font-size: 8px; '>總人數"+people_num+"</p>";
+	                	var div_num = results.rows.item(i).department-1;
+	                	document.querySelector('#item'+div_num).innerHTML += msgg;
+	                }, null);
+	            }
+	        }, null);
+	    });
+		//先延遲一下等DIV創造完成 20(微秒)
+		setTimeout("show_people_data2()",20) ;
 	}
-
-
-
-
 
 
 	var _on_work = 0;
@@ -100,7 +88,7 @@
 	var _Leave_work = 0;
 	var total_people =50;
 	show_people_data();
-	show_people_data2();
+	
 
 	function on_work() {
 		if (total_people > 0) {
@@ -127,6 +115,21 @@
 			_Leave_work =  _Leave_work + 1 ;
 		 	show_people_data();
 		}
+	}
+
+	//生產DIV function
+	function addDIV() {
+		var line_num =Math.floor( Div_count / 3);
+		if ( Div_count % 3 == 0 ) {
+			var Bigdivstr = "<div class='line_data' id='line"+line_num+"' style=' height: 100px; '></div><br>"
+			document.all["moreInfo"].insertAdjacentHTML("BeforeEnd",Bigdivstr);
+		}
+		
+		var line_str = "line"+line_num;
+		var divstr = "<div class='show_other_department' name='show"+Div_count+"' id='show"+Div_count+"'></div>"
+		document.all[line_str ].insertAdjacentHTML("BeforeEnd",divstr);
+
+		Div_count++;
 	}
 
 	function show_people_data() {
