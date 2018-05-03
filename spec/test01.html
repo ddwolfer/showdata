@@ -162,7 +162,7 @@
 		}
 		
 		var line_str = "line"+line_num;
-		var divstr = "<div class='show_other_department' name='show"+Div_count+"' id='show"+Div_count+"'></div>"
+		var divstr = "<a href='#' class='fill-div'><div class='show_other_department' name='show"+Div_count+"' id='show"+Div_count+"'></div></a>"
 		document.all[line_str ].insertAdjacentHTML("BeforeEnd",divstr);
 
 		Div_count++;
@@ -172,7 +172,7 @@
 		//假定資料設定
 		var data_count = 4;
 		var value_of_peoele = [on_work,Leave_work,out_work,off_work]; 
-		var Item_name = ["廠內人數","請假人數","外出人數","下班人數"];
+		var Item_name = ["廠內","請假","外出","下班"];
 		var circle_color = [ 
 			['#DDDDDD', '#00DDDD'],
 			['#DDDDDD', '#66DD00'],
@@ -184,13 +184,13 @@
 		for (var i = 0; i < data_count; i++) {
 			//設定DIV名稱及顯示文字
 			var divName = "circle_"+(department)+"_"+(data_count-i);
-			var text_str = "<br><br>"+value_of_peoele[i];
+			var text_str = "<br><br>"+value_of_peoele[i]+"<br>"+"<br>"+Item_name[i];
 			var myCircle = Circles.create({
 			    id:                  divName, //顯示區塊名稱
 			    radius:              25, //圓圈半徑
 			    value:               value_of_peoele[i], //數值
 			    maxValue:            off_work+on_work+out_work+Leave_work,//最大值
-			    width:               5,  //圓圈粗度
+			    width:               2,  //圓圈粗度
 		  		
 			    text:    			text_str,           
 			    // function(value){

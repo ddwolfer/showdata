@@ -28,7 +28,7 @@
             //     tx.executeSql("INSERT INTO employee VALUES (NULL,?, ?,?,?,?)",["042702"+i , "測試人員"+i+"號" , department_ID,"實習生","OFF"]);
             // }
         }
-        tx.executeSql("update employee set action = 'ON' where ID = 20");
+        tx.executeSql("update employee set action = 'OUT' where ID = 29");
         msg = '<p>Log message created and row inserted.</p>';
         document.querySelector('#status').innerHTML =  msg;
     });
