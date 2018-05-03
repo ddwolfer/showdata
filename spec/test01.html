@@ -48,41 +48,168 @@
 <script type="text/javascript">
 	var db = openDatabase('mydb','1.0','Test DB',10*1024*1024); //連接資料庫
 	var Div_count =0;	//DIV計數用
+	var more_Info_flag = 0;
+	// var total_peoele_num = [];
+	var arrayA = [];
+	var arrayB = [];
+	var arrayC = [];
+	var arrayD = [];
 	function more_department_Info() {
-		//讀取資料庫
-		db.transaction(function (tx) {
-			//依據資料庫製造DIV
-	        tx.executeSql("SELECT * FROM department", [], function (tx, results) {
-	            var len = results.rows.length, i;
-	            //迴圈
-	            for (i = 0; i < len; i++){
-	            	//製造DIV
-	            	addDIV();
-	            	//顯示工廠名稱
-	                var msg = "  <div style='margin: 0px auto;width: 95%;'>"
-	                //放圈圈的DIV
-	                for (var j = 0; j < 4; j++) {
-	                	msg += "<div id='circle_"+i+"_"+(j+1)+"' class='circle'>"+(j+1)+"</div>";
-	                }
-	                msg += "</div>   <div class='item_title' id='item"+i+"'> <p style='color: #00AAAA; font-size: 10px;'>"+results.rows.item(i).name + "</p> </div>";
+		if (more_Info_flag == 0) {
+			//讀取資料庫
+			db.transaction(function (tx) {
+				//依據資料庫製造DIV
+		        tx.executeSql("SELECT * FROM department", [], function (tx, results) {
+		            var len = results.rows.length, i;
+		            //迴圈
+		            for (i = 0; i < len; i++){
+		            	//製造DIV
+		            	addDIV();
+		            	//顯示工廠名稱
+		                var msg = "  <div style='margin: 0px auto;width: 95%;'>"
+		                //放圈圈的DIV
+		                for (var j = 0; j < 4; j++) {
+		                	msg += "<div id='circle_"+i+"_"+(j+1)+"' class='circle'>"+(j+1)+"</div>";
+		                }
+		                msg += "</div>   <div class='item_title' id='item"+i+"'> <p style='color: #00AAAA; font-size: 10px;'>"+results.rows.item(i).name + "</p> </div>";
 
-	                document.querySelector('#show'+i).innerHTML +=  msg;
-	                //抓人數
-	                tx.executeSql("SELECT * FROM employee where department ="+(i+1),[],function(tx, results,i) {
-	                	var people_num = results.rows.length;
-	                	//顯示人數
-	                	var msgg = "<p style='font-size: 8px; '>總人數"+people_num+"</p>";
-	                	var div_num = results.rows.item(i).department-1;
-	                	document.querySelector('#item'+div_num).innerHTML += msgg;
-	                }, null);
-	            }
-	        }, null);
-	    });
-		//先延遲一下等DIV創造完成 20(微秒)
-		setTimeout("show_people_data2()",20) ;
+		                document.querySelector('#show'+i).innerHTML +=  msg;
+		                //抓人數
+		                tx.executeSql("SELECT * FROM employee where department ="+(i+1),[],function(tx, results,i) {
+		                	var people_num = results.rows.length;
+		                	//顯示人數
+		                	var msgg = "<p style='font-size: 8px; '>總人數"+people_num+"</p>";
+		                	var div_num = results.rows.item(i).department-1;
+		                	document.querySelector('#item'+div_num).innerHTML += msgg;
+		                }, null);
+		            }
+		        }, null);
+			});
+			//先延遲一下等DIV創造完成 20(微秒)
+
+			setTimeout('set_circle_data()',50);
+
+			setTimeout('final_show()',100);
+
+			more_Info_flag = 1;
+		}
+	}
+
+	function addsomething0(num,dataAddress) {
+		
+		arrayA[dataAddress]=num;
+		console.log(dataAddress+"-*/*");
+	}
+	function addsomething1(num,dataAddress) {
+		
+		arrayB[dataAddress]=num;
+		console.log(dataAddress+"-*/*");
+	}
+	function addsomething2(num,dataAddress) {
+		
+		arrayC[dataAddress]=num;
+		console.log(dataAddress+"-*/*");
+	}
+	function addsomething3(num,dataAddress) {
+		
+		arrayD[dataAddress]=num;
+		console.log(dataAddress+"-*/*");
 	}
 
 
+	function final_show() {
+		for (var i = 0; i < Div_count; i++) {
+			console.log("in final"+arrayA[i]);
+			show_circle_data(arrayA[i],arrayB[i],arrayD[i],arrayC[i],i);
+		}
+	}
+
+	function fk_this_JS(i,tx) {
+		//下班
+		tx.executeSql("SELECT * FROM employee where action = 'OFF' and department ="+(i+1), [],function (tx, results) {
+			addsomething0(results.rows.length,i);
+		},null);
+		//上班
+		tx.executeSql("SELECT * FROM employee where action = 'ON' and department ="+(i+1), [],function (tx, results) {
+			addsomething1(results.rows.length,i);
+		},null);
+		//請假
+		tx.executeSql("SELECT * FROM employee where action = 'LEAVE' and department ="+(i+1), [],function (tx, results) {
+			addsomething2(results.rows.length,i);
+		},null);
+		//外出
+		tx.executeSql("SELECT * FROM employee where action = 'OUT' and department ="+(i+1), [],function (tx, results) {
+			addsomething3(results.rows.length,i);
+		},null);
+	}
+	function set_circle_data() {
+		db.transaction(function (tx) {
+			for (var i = 0; i < Div_count; i++) {
+				console.log(i+"什麼i");
+				setTimeout(fk_this_JS(i,tx),50);
+			}
+		});
+		console.log(off_work_num[0]+"????");
+	}
+
+	
+
+	//生產DIV function
+	function addDIV() {
+		var line_num =Math.floor( Div_count / 3);
+		if ( Div_count % 3 == 0 ) {
+			var Bigdivstr = "<div class='line_data' id='line"+line_num+"' style=' height: 100px; '></div><br>"
+			document.all["moreInfo"].insertAdjacentHTML("BeforeEnd",Bigdivstr);
+		}
+		
+		var line_str = "line"+line_num;
+		var divstr = "<div class='show_other_department' name='show"+Div_count+"' id='show"+Div_count+"'></div>"
+		document.all[line_str ].insertAdjacentHTML("BeforeEnd",divstr);
+
+		Div_count++;
+	}
+
+	function show_circle_data( off_work , on_work , out_work , Leave_work , department ){
+		//假定資料設定
+		var data_count = 4;
+		var value_of_peoele = [on_work,Leave_work,out_work,off_work]; 
+		var Item_name = ["廠內人數","請假人數","外出人數","下班人數"];
+		var circle_color = [ 
+			['#DDDDDD', '#00DDDD'],
+			['#DDDDDD', '#66DD00'],
+			['#DDDDDD', '#FF5511'],
+			['#DDDDDD', '#FF3333'] 
+		];	
+
+		//圈圈
+		for (var i = 0; i < data_count; i++) {
+			//設定DIV名稱及顯示文字
+			var divName = "circle_"+(department)+"_"+(data_count-i);
+			var text_str = "<br><br>"+value_of_peoele[i];
+			var myCircle = Circles.create({
+			    id:                  divName, //顯示區塊名稱
+			    radius:              25, //圓圈半徑
+			    value:               value_of_peoele[i], //數值
+			    maxValue:            off_work+on_work+out_work+Leave_work,//最大值
+			    width:               5,  //圓圈粗度
+		  		
+			    text:    			text_str,           
+			    // function(value){
+			    // 	var str = "<br><br>" + value + "<br>" + Item_name[i];
+			    // 	return str;
+			    // }, //顯示文字
+			    colors:              circle_color[i], //圈圈顏色[max-value,value]
+			    duration:            500,//從0%跑到目標%的動畫速度,預設500,0不跑,越小越快
+			    wrpClass:            'circles-wrp',
+			    textClass:           'circles-text',
+			    valueStrokeClass:    'circles-valueStroke',
+			    maxValueStrokeClass: 'circles-maxValueStroke',
+			    styleWrapper:        true,//要不要把文字放在圈圈內
+			    styleText:           true //要不要把文字放在圈圈內
+			});
+		}
+	}
+	//*下面是顯示上面大框框*//
 	var _on_work = 0;
 	var _out_work = 0;
 	var _Leave_work = 0;
@@ -116,22 +243,6 @@
 		 	show_people_data();
 		}
 	}
-
-	//生產DIV function
-	function addDIV() {
-		var line_num =Math.floor( Div_count / 3);
-		if ( Div_count % 3 == 0 ) {
-			var Bigdivstr = "<div class='line_data' id='line"+line_num+"' style=' height: 100px; '></div><br>"
-			document.all["moreInfo"].insertAdjacentHTML("BeforeEnd",Bigdivstr);
-		}
-		
-		var line_str = "line"+line_num;
-		var divstr = "<div class='show_other_department' name='show"+Div_count+"' id='show"+Div_count+"'></div>"
-		document.all[line_str ].insertAdjacentHTML("BeforeEnd",divstr);
-
-		Div_count++;
-	}
-
 	function show_people_data() {
 		//假定資料設定
 		var data_count = 4;
@@ -163,7 +274,7 @@
 			    // 	return str;
 			    // }, //顯示文字
 			    colors:              circle_color[i], //圈圈顏色[max-value,value]
-			    duration:            0,//從0%跑到目標%的動畫速度,預設500,0不跑,越小越快
+			    duration:            500,//從0%跑到目標%的動畫速度,預設500,0不跑,越小越快
 			    wrpClass:            'circles-wrp',
 			    textClass:           'circles-text',
 			    valueStrokeClass:    'circles-valueStroke',
@@ -173,91 +284,7 @@
 			});
 		}
 	}
-	function show_people_data2() {
-		for (var k = 0; k < 5; k++) {
-			//假定資料設定
-			var data_count = 4;
-			var value_of_peoele = [_on_work,_Leave_work,_out_work,total_people-_on_work-_Leave_work-_out_work]; 
-			var Item_name = ["廠內人數","請假人數","外出人數","下班人數"];
-			var circle_color = [ 
-				['#DDDDDD', '#00DDDD'],
-				['#DDDDDD', '#66DD00'],
-				['#DDDDDD', '#FF5511'],
-				['#DDDDDD', '#FF3333'] 
-			];	
-			//顯示總人數欄位
-			document.getElementById('show_people').innerHTML=total_people;
-			//圈圈
-			for (var i = 0; i < data_count; i++) {
-				//設定DIV名稱及顯示文字
-				var divName = "circle_"+k+"_"+(data_count-i);
-				var text_str = "<br><br>"+value_of_peoele[i];
-				var myCircle = Circles.create({
-				    id:                  divName, //顯示區塊名稱
-				    radius:              25, //圓圈半徑
-				    value:               value_of_peoele[i], //數值
-				    maxValue:            total_people,//最大值
-				    width:               3,  //圓圈粗度
-			  		
-				    text:    			text_str,           
-				    // function(value){
-				    // 	var str = "<br><br>" + value + "<br>" + Item_name[i];
-				    // 	return str;
-				    // }, //顯示文字
-				    colors:              circle_color[i], //圈圈顏色[max-value,value]
-				    duration:            0,//從0%跑到目標%的動畫速度,預設500,0不跑,越小越快
-				    wrpClass:            'circles-wrp',
-				    textClass:           'circles-text',
-				    valueStrokeClass:    'circles-valueStroke',
-				    maxValueStrokeClass: 'circles-maxValueStroke',
-				    styleWrapper:        true,//要不要把文字放在圈圈內
-				    styleText:           true //要不要把文字放在圈圈內
-				});
-			}
-		}
-		
-	}
-
-	function circle_data_show( total , on_work , out_work , Leave_work , department ){
-		//假定資料設定
-		var data_count = 4;
-		var value_of_peoele = [on_work,Leave_work,out_work,total-on_work-Leave_work-out_work]; 
-		var Item_name = ["廠內人數","請假人數","外出人數","下班人數"];
-		var circle_color = [ 
-			['#DDDDDD', '#00DDDD'],
-			['#DDDDDD', '#66DD00'],
-			['#DDDDDD', '#FF5511'],
-			['#DDDDDD', '#FF3333'] 
-		];	
-
-		//圈圈
-		for (var i = 0; i < data_count; i++) {
-			//設定DIV名稱及顯示文字
-			var divName = "circle_"+(department-1)+"_"+(data_count-i);
-			var text_str = "<br><br>"+value_of_peoele[i];
-			var myCircle = Circles.create({
-			    id:                  divName, //顯示區塊名稱
-			    radius:              25, //圓圈半徑
-			    value:               value_of_peoele[i], //數值
-			    maxValue:            total_people,//最大值
-			    width:               5,  //圓圈粗度
-		  		
-			    text:    			text_str,           
-			    // function(value){
-			    // 	var str = "<br><br>" + value + "<br>" + Item_name[i];
-			    // 	return str;
-			    // }, //顯示文字
-			    colors:              circle_color[i], //圈圈顏色[max-value,value]
-			    duration:            0,//從0%跑到目標%的動畫速度,預設500,0不跑,越小越快
-			    wrpClass:            'circles-wrp',
-			    textClass:           'circles-text',
-			    valueStrokeClass:    'circles-valueStroke',
-			    maxValueStrokeClass: 'circles-maxValueStroke',
-			    styleWrapper:        true,//要不要把文字放在圈圈內
-			    styleText:           true //要不要把文字放在圈圈內
-			});
-		}
-	}
+	
 </script>
 
 </body>

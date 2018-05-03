@@ -3,8 +3,11 @@
 <head>
 <script type="text/javascript">
 
+    var countNt = 1;
     var db = openDatabase('mydb','1.0','Test DB',10*1024*1024);
     var msg;
+    var teststr;
+
     db.transaction(function (tx) {
         // body...
         tx.executeSql('CREATE TABLE IF NOT EXISTS department ( `ID` INTEGER PRIMARY KEY, `name` VARCHAR(50))');
@@ -25,38 +28,51 @@
             //     tx.executeSql("INSERT INTO employee VALUES (NULL,?, ?,?,?,?)",["042702"+i , "測試人員"+i+"號" , department_ID,"實習生","OFF"]);
             // }
         }
-
+        tx.executeSql("update employee set action = 'ON' where ID = 20");
         msg = '<p>Log message created and row inserted.</p>';
         document.querySelector('#status').innerHTML =  msg;
     });
 
-    db.transaction(function (tx) {
-        tx.executeSql('SELECT * FROM department', [], function (tx, results) {
-            var len = results.rows.length, i;
-            msg = "<p>Found rows: " + len + "</p>";
-            document.querySelector('#status').innerHTML +=  msg;
-            for (i = 0; i < len; i++){
-                msg = "<p><b>"+results.rows.item(i).ID + " : " +results.rows.item(i).name + "</b></p>";
-                document.querySelector('#status').innerHTML +=  msg;
-            }
-        }, null);
-    });
+    function show_db_data() {
+        db.transaction(function (tx) {
+            tx.executeSql('SELECT * FROM department', [], function (tx, results) {
 
-    db.transaction(function (tx) {
-        tx.executeSql('SELECT * FROM employee', [], function (tx, results) {
-            var len = results.rows.length, i;
-            msg = "<p>Found rows: " + len + "</p>";
-            document.querySelector('#status').innerHTML +=  msg;
-            for (i = 0; i < len; i++){
-                msg = "<p><b>"+results.rows.item(i).ID + " : " +results.rows.item(i).idcard + results.rows.item(i).name + results.rows.item(i).department+ results.rows.item(i).position + results.rows.item(i).action +"</b></p>";
-                document.querySelector('#status').innerHTML +=  msg;
-            }
-        }, null);
-    });
+                teststr = results.rows.length;
 
+                var len = results.rows.length, i;
+
+                console.log("in :" +teststr);
+
+                msg = "<p>Found rows: " + len + "</p>";
+                document.querySelector('#status').innerHTML +=  msg;
+                for (i = 0; i < len; i++){
+                    msg = "<p><b>"+results.rows.item(i).ID + " : " +results.rows.item(i).name + "</b></p>";
+                    document.querySelector('#status').innerHTML +=  msg;
+                }
+            }, null);
+        });
+
+        db.transaction(function (tx) {
+            tx.executeSql('SELECT * FROM employee', [], function (tx, results) {
+                var len = results.rows.length, i;
+                msg = "<p>Found rows: " + len + "</p>";
+                document.querySelector('#status').innerHTML +=  msg;
+                for (i = 0; i < len; i++){
+                    msg = "<p><b>"+results.rows.item(i).ID + " : " +results.rows.item(i).idcard + results.rows.item(i).name + results.rows.item(i).department+ results.rows.item(i).position + results.rows.item(i).action +"</b></p>";
+                    document.querySelector('#status').innerHTML +=  msg;
+                }
+            }, null);
+        });
+    }
+    show_db_data();
+    setTimeout("console_show()",50);
+    function console_show(){
+        console.log("out :" +teststr);
+    }
 </script>
 </head>
 <body>
+    <button onclick="console_show()">按下去</button>
     <div id="status" name="status">Status Message</div>
 </body>
 </html>
