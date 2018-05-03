@@ -50,10 +50,10 @@
 	var Div_count =0;	//DIV計數用
 	var more_Info_flag = 0;
 	// var total_peoele_num = [];
-	var arrayA = [];
-	var arrayB = [];
-	var arrayC = [];
-	var arrayD = [];
+	var off_work_num = [];
+	var on_work_num = [];
+	var leave_work_num = [];
+	var out_work_num = [];
 	function more_department_Info() {
 		if (more_Info_flag == 0) {
 			//讀取資料庫
@@ -97,30 +97,29 @@
 
 	function addsomething0(num,dataAddress) {
 		
-		arrayA[dataAddress]=num;
+		off_work_num[dataAddress]=num;
 		console.log(dataAddress+"-*/*");
 	}
 	function addsomething1(num,dataAddress) {
 		
-		arrayB[dataAddress]=num;
+		on_work_num[dataAddress]=num;
 		console.log(dataAddress+"-*/*");
 	}
 	function addsomething2(num,dataAddress) {
 		
-		arrayC[dataAddress]=num;
+		leave_work_num[dataAddress]=num;
 		console.log(dataAddress+"-*/*");
 	}
 	function addsomething3(num,dataAddress) {
 		
-		arrayD[dataAddress]=num;
+		out_work_num[dataAddress]=num;
 		console.log(dataAddress+"-*/*");
 	}
 
 
 	function final_show() {
 		for (var i = 0; i < Div_count; i++) {
-			console.log("in final"+arrayA[i]);
-			show_circle_data(arrayA[i],arrayB[i],arrayD[i],arrayC[i],i);
+			show_circle_data(off_work_num[i],on_work_num[i],out_work_num[i],leave_work_num[i],i);
 		}
 	}
 
@@ -146,7 +145,7 @@
 		db.transaction(function (tx) {
 			for (var i = 0; i < Div_count; i++) {
 				console.log(i+"什麼i");
-				setTimeout(fk_this_JS(i,tx),50);
+				setTimeout(fk_this_JS(i,tx),100);
 			}
 		});
 		console.log(off_work_num[0]+"????");
