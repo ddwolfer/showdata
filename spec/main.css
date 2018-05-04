@@ -48,3 +48,9 @@
 	a.fill-div {
 	    color: black;
 	}
+	.detail{
+		margin:0px auto;
+		width: 90%;
+		background-color: #EEEEEE;
+		box-shadow: 0 5px 10px -2px #9B9B9B;
+	}

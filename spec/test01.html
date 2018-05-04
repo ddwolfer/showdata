@@ -19,7 +19,7 @@
 			<div id="circle_4" class="circle">4</div>
 		</div>
 		<div class="item_title">
-			<br><p style="color: #00AAAA; font-size: 25px;">永科廠</p>
+			<br><p id="main_show" style="color: #00AAAA; font-size: 25px;"></p>
 			<p>總人數：<span id="show_people"></span></p>
 		</div>
 	</div>
@@ -27,13 +27,13 @@
 	<br>
 	<div style="margin: 0px auto;width: 98%; ">
 		<p>
-			<input type="text" name="Employee_ID" placeholder="idcard">
+			<input type="text" name="Employee_ID" placeholder="idcard" id="idcard">
 			<button onclick="on_work()">上班打卡</button>
 			<button onclick="Leave_work()">我要請假</button>
 			<button onclick="out_work()">暫時外出</button>
 			<button onclick="off_work()">下班打卡</button>
 			<button onclick="more_department_Info()">瀏覽其他部門</button>
-			<button onclick="show_people_data2()">部門詳細資料</button>
+			<button onclick="department_detail()">部門詳細資料</button>
 		</p>
 	</div>
 		
@@ -48,14 +48,104 @@
 <script type="text/javascript">
 	var db = openDatabase('mydb','1.0','Test DB',10*1024*1024); //連接資料庫
 	var Div_count =0;	//DIV計數用
-	var more_Info_flag = 0;
-	// var total_peoele_num = [];
-	var off_work_num = [];
-	var on_work_num = [];
-	var leave_work_num = [];
-	var out_work_num = [];
+	var more_Info_flag = 0; //防連點用
+	var off_work_num = [];	//下班人數
+	var on_work_num = [];	//上班人數
+	var leave_work_num = [];	//請假人數
+	var out_work_num = [];	//外出人數
+
+	function on_work(argument) {
+		var getinputvalue = document.getElementById("idcard").value.toString();
+		db.transaction(function (tx) {
+			/*改點資料吧 ON OFF OUT LEAVE*/
+        	tx.executeSql("update employee set action = 'ON' where idcard ='"+getinputvalue+"'");
+		});
+		
+		//抓取各部門4個狀態的值
+		setTimeout('set_circle_data()',50);
+		//顯示設定好的值出來
+		setTimeout('final_show()',200);
+		setTimeout("show_people_data(off_work_num[data_num],on_work_num[data_num],out_work_num[data_num],leave_work_num[data_num])",250);
+	}
+	function off_work(argument) {
+		var getinputvalue = document.getElementById("idcard").value.toString();
+		db.transaction(function (tx) {
+			/*改點資料吧 ON OFF OUT LEAVE*/
+        	tx.executeSql("update employee set action = 'OFF' where idcard ='"+getinputvalue+"'");
+		});
+		
+		//抓取各部門4個狀態的值
+		setTimeout('set_circle_data()',50);
+		//顯示設定好的值出來
+		setTimeout('final_show()',200);
+		setTimeout("show_people_data(off_work_num[data_num],on_work_num[data_num],out_work_num[data_num],leave_work_num[data_num])",200);
+	}
+	function out_work(argument) {
+		var getinputvalue = document.getElementById("idcard").value.toString();
+		db.transaction(function (tx) {
+			/*改點資料吧 ON OFF OUT LEAVE*/
+        	tx.executeSql("update employee set action = 'OUT' where idcard ='"+getinputvalue+"'");
+		});
+		
+		//抓取各部門4個狀態的值
+		setTimeout('set_circle_data()',50);
+		//顯示設定好的值出來
+		setTimeout('final_show()',200);
+		setTimeout("show_people_data(off_work_num[data_num],on_work_num[data_num],out_work_num[data_num],leave_work_num[data_num])",200);
+	}
+	function Leave_work(argument) {
+		var getinputvalue = document.getElementById("idcard").value.toString();
+		db.transaction(function (tx) {
+			/*改點資料吧 ON OFF OUT LEAVE*/
+        	tx.executeSql("update employee set action = 'LEAVE' where idcard ='"+getinputvalue+"'");
+		});
+		
+		//抓取各部門4個狀態的值
+		setTimeout('set_circle_data()',50);
+		//顯示設定好的值出來
+		setTimeout('final_show()',200);
+		setTimeout("show_people_data(off_work_num[data_num],on_work_num[data_num],out_work_num[data_num],leave_work_num[data_num])",200);
+	}
+	/*顯示部門詳細資料*/
+	function department_detail(argument) {
+		more_Info_flag = 0;
+		Div_count =0;
+		document.getElementById('moreInfo').innerHTML="";
+		db.transaction(function (tx) {
+
+			tx.executeSql("SELECT * FROM employee where department ="+parseInt(str_value), [], function (tx, results) {
+				var len = results.rows.length;
+				var msg = "<div class='detail'><table> <tr><td style='width:50%;'>姓名</td><td style='width:45%;'>職位</td><td style='width:33%;'>狀態</td></tr> ";
+				for (var i = 0; i < len; i++) {
+					msg += "<tr>";
+					msg += "<td>"+results.rows.item(i).name+"</td>";
+					msg += "<td>"+results.rows.item(i).position+"</td>";
+
+					if (results.rows.item(i).action =="OFF") {
+						msg += "<td><span style='color:red;'>"+results.rows.item(i).action+"</span></td>";
+					}
+					else if(results.rows.item(i).action =="ON") {
+						msg += "<td><span style='color:green;'>"+results.rows.item(i).action+"</span></td>";
+					}
+					else if(results.rows.item(i).action =="OUT") {
+						msg += "<td><span style='color:blue;'>"+results.rows.item(i).action+"</span></td>";
+					}
+					else{
+						msg += "<td><span style='color:purple;'>"+results.rows.item(i).action+"</span></td>";
+					}
+					
+					msg += "</tr>"
+				}
+				msg += "</table></div>"
+				document.all["moreInfo"].insertAdjacentHTML("BeforeEnd",msg);
+			}, null);
+		});
+	}
+	/*顯示部門詳細資料END*/
+	/*顯示更多部門*/
 	function more_department_Info() {
 		if (more_Info_flag == 0) {
+			document.getElementById('moreInfo').innerHTML="";
 			//讀取資料庫
 			db.transaction(function (tx) {
 				//依據資料庫製造DIV
@@ -85,44 +175,35 @@
 		            }
 		        }, null);
 			});
-			//先延遲一下等DIV創造完成 20(微秒)
-
+			//先延遲一下等DIV創造完成 (微秒)
+			//抓取各部門4個狀態的值
 			setTimeout('set_circle_data()',50);
-
+			//顯示設定好的值出來
 			setTimeout('final_show()',100);
-
+			//防止連點
 			more_Info_flag = 1;
 		}
 	}
-
-	function addsomething0(num,dataAddress) {
-		
-		off_work_num[dataAddress]=num;
-		console.log(dataAddress+"-*/*");
+	/*顯示更多部門 END*/
+	//抓取各部門4個狀態的值
+	function set_circle_data() {
+		db.transaction(function (tx) {
+			for (var i = 0; i < Div_count; i++) {
+				console.log(i+"什麼i");
+				setTimeout(fk_this_JS(i,tx),100);
+			}
+		});
+		console.log(off_work_num[0]+"????");
 	}
-	function addsomething1(num,dataAddress) {
-		
-		on_work_num[dataAddress]=num;
-		console.log(dataAddress+"-*/*");
-	}
-	function addsomething2(num,dataAddress) {
-		
-		leave_work_num[dataAddress]=num;
-		console.log(dataAddress+"-*/*");
-	}
-	function addsomething3(num,dataAddress) {
-		
-		out_work_num[dataAddress]=num;
-		console.log(dataAddress+"-*/*");
-	}
-
-
+	//顯示設定好的值出來
 	function final_show() {
 		for (var i = 0; i < Div_count; i++) {
 			show_circle_data(off_work_num[i],on_work_num[i],out_work_num[i],leave_work_num[i],i);
 		}
 	}
 
+
+	/*定值用*/
 	function fk_this_JS(i,tx) {
 		//下班
 		tx.executeSql("SELECT * FROM employee where action = 'OFF' and department ="+(i+1), [],function (tx, results) {
@@ -141,19 +222,31 @@
 			addsomething3(results.rows.length,i);
 		},null);
 	}
-	function set_circle_data() {
-		db.transaction(function (tx) {
-			for (var i = 0; i < Div_count; i++) {
-				console.log(i+"什麼i");
-				setTimeout(fk_this_JS(i,tx),100);
-			}
-		});
-		console.log(off_work_num[0]+"????");
+	function addsomething0(num,dataAddress) {
+		
+		off_work_num[dataAddress]=num;
+		console.log(dataAddress+"-*/*");
+		console.log(off_work_num[dataAddress]+"-");
 	}
+	function addsomething1(num,dataAddress) {
+		
+		on_work_num[dataAddress]=num;
+		console.log(dataAddress+"-*/*");
+	}
+	function addsomething2(num,dataAddress) {
+		
+		leave_work_num[dataAddress]=num;
+		console.log(dataAddress+"-*/*");
+	}
+	function addsomething3(num,dataAddress) {
+		
+		out_work_num[dataAddress]=num;
+		console.log(dataAddress+"-*/*");
+		console.log(out_work_num[dataAddress]+"-");
+	}
+	/*定值用END*/
 
-	
-
-	//生產DIV function
+	/*生產DIV function*/
 	function addDIV() {
 		var line_num =Math.floor( Div_count / 3);
 		if ( Div_count % 3 == 0 ) {
@@ -162,12 +255,13 @@
 		}
 		
 		var line_str = "line"+line_num;
-		var divstr = "<a href='#' class='fill-div'><div class='show_other_department' name='show"+Div_count+"' id='show"+Div_count+"'></div></a>"
+		var divstr = "<a href='file:///C:/Users/user/Desktop/showdata/spec/test01.html?ID="+(Div_count+1)+"' class='fill-div'><div class='show_other_department' name='show"+Div_count+"' id='show"+Div_count+"'></div></a>"
 		document.all[line_str ].insertAdjacentHTML("BeforeEnd",divstr);
 
 		Div_count++;
 	}
-
+	/*生產DIV function END*/
+	/*小圈圈function*/
 	function show_circle_data( off_work , on_work , out_work , Leave_work , department ){
 		//假定資料設定
 		var data_count = 4;
@@ -198,7 +292,7 @@
 			    // 	return str;
 			    // }, //顯示文字
 			    colors:              circle_color[i], //圈圈顏色[max-value,value]
-			    duration:            500,//從0%跑到目標%的動畫速度,預設500,0不跑,越小越快
+			    duration:            0,//從0%跑到目標%的動畫速度,預設500,0不跑,越小越快
 			    wrpClass:            'circles-wrp',
 			    textClass:           'circles-text',
 			    valueStrokeClass:    'circles-valueStroke',
@@ -208,44 +302,49 @@
 			});
 		}
 	}
-	//*下面是顯示上面大框框*//
-	var _on_work = 0;
-	var _out_work = 0;
-	var _Leave_work = 0;
-	var total_people =50;
-	show_people_data();
-	
+	/*小圈圈function END*/
 
-	function on_work() {
-		if (total_people > 0) {
-			_on_work = _on_work + 1 ;
-			show_people_data();
-		}
+
+
+	//*下面是顯示上面大框框*//
+	/*拿網址參數*/
+	var url=window.location.toString(); //取得當前網址   
+	var str=""; //參數中等號左邊的值   
+	var str_value=""; //參數中等號右邊的值   
+	if(url.indexOf("?")!=-1){   
+	    //如果網址有"?"符號   
+	    var ary=url.split("?")[1].split("&");   
+	    //取得"?"右邊網址後利用"&"分割字串存入ary陣列 ["a=1","b=2","c=3"]   
+	    for(var i in ary){   
+	        //取得陣列長度去跑迴圈，如:網址有三個參數，則會跑三次   
+	        str=ary[i].split("=")[0];   
+	        //取得參數"="左邊的值存入str變數中   
+	        if (str == "ID") {   
+	        //若str等於想要抓取參數 如:b   
+	            str_value = decodeURI(ary[i].split("=")[1]);   
+	            //取得b等號右邊的值並經過中文轉碼後存入str_value   
+	        }   
+	    }   
 	}
-	function off_work() {
-		if (_on_work > 0) {
-			_on_work = _on_work - 1 ;
-			show_people_data();
-		}
+	else{
+		str_value = "1";
 	}
-	function out_work() {
-		//公司有人才允許外出
-		if (_on_work > 0) {
-			_on_work = _on_work - 1 ;
-			_out_work = _out_work + 1 ;
-			show_people_data();
-		}
-	}
-	function Leave_work() {
-		if (total_people > 0) {
-			_Leave_work =  _Leave_work + 1 ;
-		 	show_people_data();
-		}
-	}
-	function show_people_data() {
+	/*拿網址參數END*/
+	data_num = parseInt(str_value)-1;
+	db.transaction(function (tx) {
+		tx.executeSql("SELECT * FROM department where ID ="+parseInt(str_value), [], function (tx, results) {
+		    document.getElementById('main_show').innerHTML=results.rows.item(i).name;
+		}, null);
+		setTimeout(fk_this_JS(data_num,tx),80);	
+	});
+
+	setTimeout("show_people_data(off_work_num[data_num],on_work_num[data_num],out_work_num[data_num],leave_work_num[data_num])",100);
+
+	/*大圈圈function*/
+	function show_people_data(off_work , on_work , out_work , Leave_work) {
 		//假定資料設定
 		var data_count = 4;
-		var value_of_peoele = [_on_work,_Leave_work,_out_work,total_people-_on_work-_Leave_work-_out_work]; 
+		var value_of_peoele = [on_work,Leave_work,out_work,off_work]; 
 		var Item_name = ["廠內人數","請假人數","外出人數","下班人數"];
 		var circle_color = [ 
 			['#DDDDDD', '#00DDDD'],
@@ -254,7 +353,7 @@
 			['#DDDDDD', '#FF3333'] 
 		];	
 		//顯示總人數欄位
-		document.getElementById('show_people').innerHTML=total_people;
+		document.getElementById('show_people').innerHTML=off_work+on_work+out_work+Leave_work;
 		//圈圈
 		for (var i = 0; i < data_count; i++) {
 			//設定DIV名稱及顯示文字
@@ -264,7 +363,7 @@
 			    id:                  divName, //顯示區塊名稱
 			    radius:              80, //圓圈半徑
 			    value:               value_of_peoele[i], //數值
-			    maxValue:            total_people,//最大值
+			    maxValue:            off_work+on_work+out_work+Leave_work,//最大值
 			    width:               5,  //圓圈粗度
 		  		
 			    text:    			text_str,           
@@ -273,7 +372,7 @@
 			    // 	return str;
 			    // }, //顯示文字
 			    colors:              circle_color[i], //圈圈顏色[max-value,value]
-			    duration:            500,//從0%跑到目標%的動畫速度,預設500,0不跑,越小越快
+			    duration:            0,//從0%跑到目標%的動畫速度,預設500,0不跑,越小越快
 			    wrpClass:            'circles-wrp',
 			    textClass:           'circles-text',
 			    valueStrokeClass:    'circles-valueStroke',
@@ -283,7 +382,7 @@
 			});
 		}
 	}
-	
+	/*大圈圈function END*/
 </script>
 
 </body>
