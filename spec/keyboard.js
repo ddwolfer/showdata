@@ -1,55 +1,41 @@
-<html>
-<head>
-<script type='text/javascript' 
-        src='http://ajax.aspnetcdn.com/ajax/jQuery/jquery-1.5.1.js'></script>
-<script type='text/javascript'>
-
-var strcheck="";
+var str_check_keyboard_input="";
 
 document.onkeydown=function(event){
 	var e = event || window.event || arguments.callee.caller.arguments[0];
 	if(e && (e.keyCode==48 || e.keyCode==96) ){ // 按 0
-		strcheck +='0';
+		str_check_keyboard_input +='0';
 	}   
 	if(e && (e.keyCode==49 || e.keyCode==97) ){ // 按 1
-		strcheck +='1';
+		str_check_keyboard_input +='1';
 	}  
 	if(e && (e.keyCode==50 || e.keyCode==98) ) { // 按 2
-		strcheck +='2';
+		str_check_keyboard_input +='2';
 	}  
 	if(e && (e.keyCode==51 || e.keyCode==99) ){ // 按 3
-		strcheck +='3';
+		str_check_keyboard_input +='3';
 	}  
 	if(e && (e.keyCode==52 || e.keyCode==100) ){ // 按 4
-		strcheck +='4';
+		str_check_keyboard_input +='4';
 	}  
 	if(e && (e.keyCode==53 || e.keyCode==101) ){ // 按 5
-		strcheck +='5';
+		str_check_keyboard_input +='5';
 	}  
 	if(e && (e.keyCode==54 || e.keyCode==102) ){ // 按 6
-		strcheck +='6';
+		str_check_keyboard_input +='6';
 	}  
 	if(e && (e.keyCode==55 || e.keyCode==103) ){ // 按 7
-		strcheck +='7';
+		str_check_keyboard_input +='7';
 	}  
 	if(e && (e.keyCode==56 || e.keyCode==104) ){ // 按 8
-		strcheck +='8';
+		str_check_keyboard_input +='8';
 	}  
 	if(e && (e.keyCode==57 || e.keyCode==105) ){ // 按 9
-		strcheck +='9';
+		str_check_keyboard_input +='9';
 	}     
 	if( e && e.keyCode == 13){
-	    alert(strcheck);
-	    strcheck ="";
+	    alert(str_check_keyboard_input);
+	    str_check_keyboard_input ="";
 	}
 }; 
 //ket code list url
 // https://www.cambiaresearch.com/articles/15/javascript-char-codes-key-codes 
-</script>
-</head>
-<body>
-
-HAHAHA
-
-</body>
-</html>
