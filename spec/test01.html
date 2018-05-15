@@ -14,7 +14,7 @@
 	<!-- 顯示上方主要部門 -->
 	<div id="outside" >
 		<div style="margin: 0px auto;width: 95%;">
-			<div id="circle_1" class="circle">1</div>
+			<div id="circle_1" style="margin-top: 65px;margin-right: 15px;float: right;">1</div>
 			<div id="circle_2" class="circle">2</div>
 			<div id="circle_3" class="circle">3</div>
 			<div id="circle_4" class="circle">4</div>
@@ -262,7 +262,8 @@
 		}
 		
 		var line_str = "line"+line_num;
-		var divstr = "<a href='file:///C:/Users/user/Desktop/showdata/spec/test01.html?ID="+(Div_count+1)+"' class='fill-div'><div class='show_other_department' name='show"+Div_count+"' id='show"+Div_count+"'></div></a>"
+		var url_string = location.href.split("?")[0];
+		var divstr = "<a href='"+url_string+"?ID="+(Div_count+1)+"' class='fill-div'><div class='show_other_department' name='show"+Div_count+"' id='show"+Div_count+"'></div></a>"
 		document.all[line_str ].insertAdjacentHTML("BeforeEnd",divstr);
 
 		Div_count++;
@@ -302,7 +303,7 @@
 			    colors:              circle_color[i], //圈圈顏色[max-value,value]
 			    duration:            0,//從0%跑到目標%的動畫速度,預設500,0不跑,越小越快
 			    wrpClass:            'circles-wrp',
-			    textClass:           'circles-text',
+			    textClass:           'circles',
 			    valueStrokeClass:    'circles-valueStroke',
 			    maxValueStrokeClass: 'circles-maxValueStroke',
 			    styleWrapper:        true,//要不要把文字放在圈圈內
@@ -354,6 +355,7 @@
 		var data_count = 4;
 		var value_of_peoele = [on_work,Leave_work,out_work,off_work]; 
 		var Item_name = ["廠內人數","請假人數","外出人數","下班人數"];
+		var circle_radius = [80,80,80,50];
 		var circle_color = [ 
 			['#DDDDDD', '#00DDDD'],
 			['#DDDDDD', '#66DD00'],
@@ -369,7 +371,7 @@
 			var text_str = "<br><br>"+value_of_peoele[i]+"<br>"+Item_name[i];
 			var myCircle = Circles.create({
 			    id:                  divName, //顯示區塊名稱
-			    radius:              80, //圓圈半徑
+			    radius:              circle_radius[i], //圓圈半徑
 			    value:               value_of_peoele[i], //數值
 			    maxValue:            off_work+on_work+out_work+Leave_work,//最大值
 			    width:               5,  //圓圈粗度
